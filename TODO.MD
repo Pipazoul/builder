@@ -6,21 +6,20 @@
 
 - Create a main entry point
     - [ ] builder.py
-        - [ ] load config file
-            - [ ] path variable
-            - [ ] lowtech = false
-        - [ ] load layouts :
-            - [ ] html object (html.header html.footer html.body)
+        - [x] load config file
+            - [x] path variable
+            - [x] lowtech = false
+        - [x] load layouts :
+            - [x] html object (html.header html.footer html.body)
         - [ ] folder parsing :
-            - [ ] menu array
-            - [ ] articles array
+            - [x] articles array
         - [ ] html gen
             - [ ] get layout
                 - [ ] foreach article append to html.body
                 - [ ] write 
-    - [ ] config.yml :
-        - [ ] lowtechmode : true/false
-        - [ ] path to articles
+    - [x] config.yml :
+        - [x] lowtechmode : true/false
+        - [x] path to articles
 ## ClassicMode
 - [ ] Generate layout with content inside
 - [ ] Generate homepage
@@ -48,12 +47,15 @@ In two version classic and lowtech
 
 
 ## Features for 0.2
+DATE ORDERING
 IMAGE COMPRESSION
 MUSIC PLAYER
 MENU
 RESPONSIVE WEBSITE
 
+
 ## In the future
+EXCLUDE FOLDERS 
 FTP sync 
 Music compression :
     - 320kb/s classic mode
