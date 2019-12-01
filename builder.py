@@ -1,7 +1,8 @@
 import json
 import os
+import shutil 
 
-# Variables
+# Variables definition
 html = {
     "header" : "null",
     "article" : "null",
@@ -20,6 +21,8 @@ article = {
     }
 }
 
+outputDir = "public/"
+
 # Getting configuration params
 with open('config.json') as json_data_file:
     conf = json.load(json_data_file)
@@ -35,6 +38,7 @@ print('LowtechMode : ' + str(lowTechMode))
 
 # Layout loading
 def layouts() :
+    print('layout import')
     # main.html loading
     with open('layouts/main.html') as file:
         header = file.read()
@@ -46,30 +50,38 @@ def layouts() :
     with open('layouts/article.html') as file:
         html["article"] = file.read()
     
+    # copy style css to outputDir
+    print("Style copy to public folder")
+    shutil.copy("layouts/style.css", outputDir)
 
 # Parses every folder and gets article content
-def folderParse(path) : 
+def folderParse(path) :
+    print('Folder parsing ...')
     # folder parsing
     folders = os.listdir(path)
     for folder in folders :
-        print("Folder : " + folder)
-        # Parse subfolder
-        # TODO Does not parse avery folder 
-        if os.path.isdir(folder) :
-            articles = os.listdir(folder)
-            for article in articles :
-                print("Article : " + str(article))
-        else :
-            print('NOT A FOLDER')
+        article = articleParse(path+'/'+folder)
+        genHtml(article)
 
+# Parses the images an markdown file into the article variable
 def articleParse(path) :   
     files = os.listdir(path)
     for file in files :
         print("File : " + str(file))
         # Image checking
         if file.lower().endswith(('.png', '.jpg', '.jpeg')) :
-            article["media"] = path + "/" + file
+            #article["media"] = path + "/" + file
+            # copy image to public
+            print("Image copy to public folder")
+            try :
+                os.mkdir(outputDir + "medias/")
+            except OSError :
+                print("The folders already exist")
+            shutil.copy(path + "/" + file, outputDir+"medias")
             
+            article["media"] =  "medias/" + file
+            print("ARTICLE MEDIA :" + str(article["media"]))
+
         # Markdown parse
         if file.lower().endswith(('.md')) :
             with open(path+"/"+file) as file :
@@ -92,14 +104,44 @@ def articleParse(path) :
                 article["link"]["alt"] = alt[0]
                 link = alt[1].split('(')
                 link = link[1].split(')')
-                article["link"]["link"] = link[0]         
-    return article
+                article["link"]["link"] = link[0]
+                #print(article)
+                return article
 
+# Generates the html structure for each article 
+def genHtml(articles) :
+    print (article["title"])
+    f=open(outputDir + "/articles.html", "a")
+    f.write('<div class="card">\
+    <div class="date">'+article["date"]+'</div>\
+    <div class="featured-image left">\
+    <img src="'+article["media"]+'"></div>\
+    <div class="text">\
+    <h2>'+article["title"]+'</h2>\
+    <p>'+article["body"]+'</p>\
+    <a href="'+article["link"]["link"]+'">'+article["link"]["alt"]+'</a>\
+    </div>\
+    </div>')
+
+# Creates the default output folder structure
+def createFolderStruc(outputDir) :
+    try :
+        shutil.rmtree(outputDir)
+    except Exception  :
+        print("The folders already exist")
+
+    os.mkdir(outputDir)
+    os.mkdir(outputDir + "medias")
 
 def main() :
+    print("Started Builder ...")
+    createFolderStruc(outputDir)
     layouts()
-    #folderParse(path)
-    article = articleParse("../3d/03-11-19_landscape")
-    print(article)
+    folderParse("../everyday/3d",)
+    articlesFile = open(outputDir + "articles.html")
+    f=open(outputDir +"/index.html", "a+")
+    f.write(html["header"])
+    f.write(articlesFile.read())
+    f.write(html["footer"])
 
 main()
