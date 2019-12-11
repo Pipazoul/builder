@@ -13,8 +13,12 @@
             - [x] html object (html.header html.footer html.body)
         - [ ] folder parsing :
             - [x] articles array
+            - [ ] Articles type :
+                - Image
+                - Text (with choosen default image)
         - [ ] html gen
             - [ ] get layout
+                - [ ] Filter articles per date to mix every category
                 - [ ] foreach article append to html.body
                 - [ ] write 
     - [x] config.yml :
@@ -29,7 +33,9 @@
     - [ ] Display content
     - [ ] output in /public folder
 
-
+## Debug 
+- [ ] The last image project is not displayed (replaced by the fractal image)
+- [ ] The script cant write without sudo
 
 
 ## Features for 0.1
