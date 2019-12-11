@@ -1,0 +1,5 @@
+{
+    "path":"mypath",
+    "lowTech": true,
+    "exclusions" : [".git"]
+}
