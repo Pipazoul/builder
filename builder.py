@@ -29,6 +29,7 @@ with open('config.json') as json_data_file:
     conf = json.load(json_data_file)
 
 path = conf["path"]
+categories = conf["categories"]
 lowTechMode = conf["lowTech"]
 exclusions = conf["exclusions"]
 
@@ -75,46 +76,42 @@ def folderParse(path, type) :
     #print('Folder parsing ...')
     # folder parsing
     folders = os.listdir(path)
-    for folder in folders :
+    for folder in sorted(folders) :
         article = articleParse(path+'/'+folder, type)
-        articles.append(article)
+        print(folder)
+        #articles.append(article)
         genHtml(article)
+
 
 # Parses the images an markdown file into the article variable
 def articleParse(path, type) :   
     files = os.listdir(path)
-    for file in files :
-        #print("File : " + str(file))
-        
+    for file in sorted(files) : 
         # Checks the post type
-        if type == "image" :
-            # Image checking
-            if file.lower().endswith(('.png', '.jpg', '.jpeg'))  :
-                #article["media"] = path + "/" + file
-                # copy image to public
-                #print("Image copy to public folder")
-                try :
-                    os.mkdir(outputDir + "medias/")
-                except OSError :
-                    print("The folders already exist")
+        # Image checking
+        if file.lower().endswith(('.png', '.jpg', '.jpeg'))  :
+            #article["media"] = path + "/" + file
+            # copy image to public
+            #print("Image copy to public folder")
+            try :
+                os.mkdir(outputDir + "medias/")
+            except OSError :
+                print("The folders already exist")
 
-                # Image compression
-                image = Image.open(path + "/" + file)
-                basewidth = 500
-                wpercent = (basewidth/float(image.size[0]))
-                hsize = int((float(image.size[1])*float(wpercent)))
-                image = image.resize((basewidth,hsize), Image.ANTIALIAS)
-                image.thumbnail("200, 200", Image.ANTIALIAS)
-                image.save(outputDir+"medias/" + file)
-                if lowTechMode == True :
-                    image = image.convert('1')
-                    image.save(outputDir+"medias/dithered/" + file)
-
-                article["media"] =  "medias/" + file
-                #print("ARTICLE MEDIA :" + str(article["media"]))
-        else : 
-            article["media"] =  "medias/types/" + type + ".jpg"
+            # Image compression
+            image = Image.open(path + "/" + file)
+            basewidth = 500
+            wpercent = (basewidth/float(image.size[0]))
+            hsize = int((float(image.size[1])*float(wpercent)))
+            image = image.resize((basewidth,hsize), Image.ANTIALIAS)
+            image.thumbnail("200, 200", Image.ANTIALIAS)
+            image.save(outputDir+"medias/" + type + "_" + file)
+            if lowTechMode == True :
+                image = image.convert('1')
+                image.save(outputDir+"medias/dithered/" + type + "_" + file)
+            article["media"] =  "medias/" + type + "_" + file
             #print("ARTICLE MEDIA :" + str(article["media"]))
+        
 
         # Markdown parse
         if file.lower().endswith(('.md')) :
@@ -144,6 +141,9 @@ def articleParse(path, type) :
 
 # Generates the html structure for each article 
 def genHtml(article) :
+
+    print(article)
+    
     f=open(outputDir + "/articles.html", "a")
     f.write('<div class="card">\
     <div class="date">'+article["date"]+'</div>\
@@ -162,12 +162,11 @@ def main() :
     print("Started Builder ...")
     createFolderStruc(outputDir)
     layouts()
-    folderParse("../everyday/3d","image")
-    folderParse("../everyday/cooking","image")
-    folderParse("../everyday/pixel_art","image")
-    folderParse("../everyday/code","code")
-    folderParse("../everyday/game","game")
-    folderParse("../everyday/music","music")
+
+
+    for category in categories  :
+        print(category[1])
+        folderParse(category[0],category[1])
 
     articlesFile = open(outputDir + "articles.html")
     f=open(outputDir +"/index.html", "a+")

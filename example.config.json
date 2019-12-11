@@ -1,0 +1,6 @@
+{
+    "path":"my/path",
+    "categories" : [["path/to/my/category", "typeOfArticle"], ["path/to/my/category", "typeOfArticle"]],
+    "lowTech": true,
+    "exclusions" : [".git", "lol"]
+}
